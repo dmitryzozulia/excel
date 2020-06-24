@@ -1,0 +1,23 @@
+{
+  "name": "excel",
+  "version": "1.0.0",
+  "description": "excel ",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmitryzozulia/excel.git"
+  },
+  "keywords": [
+    "excel",
+    "project"
+  ],
+  "author": "Dmitry Zozulia <z1dima1z@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dmitryzozulia/excel/issues"
+  },
+  "homepage": "https://github.com/dmitryzozulia/excel#readme"
+}
