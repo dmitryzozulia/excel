@@ -25,6 +25,7 @@
   "homepage": "https://github.com/dmitryzozulia/excel#readme",
   "devDependencies": {
     "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/preset-env": "^7.10.3",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
