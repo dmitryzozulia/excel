@@ -1,6 +1,15 @@
 @import "mixins";
 @import "variables";
 
+.unselectable {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
 
 .excel__table {
   position: absolute;
@@ -16,7 +25,9 @@
     min-height: 20px;
     height: $row-height;
   }
+
   .row-info {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,11 +38,14 @@
     background: #f8f9fa;
     white-space: nowrap;
   }
+
   .row-data {
     display: flex;
 
   }
+
   .column {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,6 +58,7 @@
     border-top: 0;
 
   }
+
   .cell {
     color: black;
     min-width: 40px;
@@ -54,10 +69,41 @@
     border-left: 0;
     border-top: 0;
     outline: none;
+
     &.selected {
       border: none;
-      outline: 2px solid #3c74ff;
+      outline: 2px solid $primary-color;
       z-index: 2;
+    }
+  }
+
+  .row-resize, .col-resize {
+    position: absolute;
+    background: $primary-color;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+    z-index: 1000;
+    &:hover {
+      opacity: 1 !important;
+    }
+  }
+
+  .col-resize {
+    width: 4px;
+    top: 0;
+
+    &:hover {
+      cursor: e-resize;
+    }
+  }
+
+  .row-resize {
+    height: 4px;
+    left: 0;
+
+    &:hover {
+      cursor: n-resize;
     }
   }
 }
