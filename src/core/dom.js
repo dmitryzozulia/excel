@@ -14,6 +14,17 @@ class Dom {
         return this.$el.outerHTML.trim()
     }
 
+    text(text) {
+        if (typeof text === 'string') {
+            this.$el.textContent = text
+            return this
+        }
+        if (this.$el.tagName.toLowerCase() === 'input') {
+            return this.$el.value.trim()
+        }
+        return this.$el.textContent.trim()
+    }
+
     clear() {
         this.html('')
         return this
@@ -55,6 +66,21 @@ class Dom {
         Object.keys(styles).forEach(key => {
                 this.$el.style[key] = styles[key]
         })
+    }
+    find(selector) {
+        return $(this.$el.querySelector(selector))
+    }
+    addClass(name) {
+        this.$el.classList.add(name)
+        return this
+    }
+    removeClass(name) {
+        this.$el.classList.remove(name)
+        return this
+    }
+    focus() {
+        this.$el.focus()
+        return this
     }
 }
 

@@ -5,15 +5,22 @@ const CODES = {
 
 function toColumn(col, data) {
     return `<div class="column unselectable" 
-            data-type="resizable" data-index="${data}">
+            data-type="resizable" data-col="${data}">
             ${col}
             <div class="col-resize" data-resize="col"></div>
             </div>`
 }
 
-function toCell(_, data) {
-    return `<div class="cell" data-index="${data}" contenteditable>
-    </div>`
+function toCell(row) {
+    return function(_, col) {
+        return `
+        <div class="cell" 
+            data-col="${col}" 
+            data-type="cell"
+            data-id="${row}:${col}" 
+            contenteditable
+        >111</div>`
+    }
 }
 
 function createRow(index, content) {
@@ -46,12 +53,13 @@ export function createTable(rowCount = 15) {
 
     rows.push(createRow('', cols))
 
-    for (let i = 0; i < rowCount; i++) {
-        const cells= new Array(colsCount)
+    for (let row = 0; row < rowCount; row++) {
+        const cells = new Array(colsCount)
             .fill('')
-            .map(toCell)
+            // .map((_, col) => toCell(col, row))
+            .map(toCell(row))
             .join('')
-        rows.push(createRow(i + 1, cells))
+        rows.push(createRow(row + 1, cells))
     }
     return rows.join('')
 }
