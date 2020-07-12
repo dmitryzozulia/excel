@@ -53,7 +53,7 @@ export function resize(event) {
             })
         } else {
             document.querySelectorAll(
-                `[data-index="${$parent.data.index}"]`
+                `[data-col="${$parent.data.col}"]`
             ).forEach(el => el.style.width = value + 'px')
         }
     }
