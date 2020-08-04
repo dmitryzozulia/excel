@@ -1,4 +1,5 @@
 import {$} from '@core/dom'
+import {parse} from '@core/parse'
 
 export class TableSelection {
     static className = 'selected'
@@ -16,8 +17,15 @@ export class TableSelection {
     }
 
     clear() {
+        if (this.current !== null) {
+            this.current.text(parse(this.current.data.value))
+        }
         this.group.forEach($el => $el.removeClass(TableSelection.className))
         this.group = []
+    }
+
+    get selectedIds() {
+        return this.group.map($el => $el.data.id)
     }
 
     selectGroupCtrl($el) {
@@ -61,6 +69,10 @@ export class TableSelection {
             }
         }
         this.group.map(i => i.addClass(TableSelection.className))
+    }
+
+    applyStyle(style) {
+        this.group.forEach($el => $el.css(style))
     }
 }
 

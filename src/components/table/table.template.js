@@ -1,11 +1,44 @@
+import {initialState} from '@/redux/initialState'
+import {toInLineStyles} from '@core/utils'
+import {defaultStyles} from '@/constans'
+import {parse} from '@core/parse'
+
 const CODES = {
     A: 65,
     Z: 90
 }
 
+function widthCol(idCol) {
+    const state = initialState
+        if ('colState' in state && idCol in state.colState) {
+            return `${state.colState[idCol]}px;`
+        }
+    return `120px`
+}
+
+function heightRow(idRow) {
+    const state = initialState
+        if ('rowState' in state && idRow in state.rowState) {
+            return `style = "height: ${state.rowState[idRow]}px;"`
+        }
+    return ''
+}
+
+function dataCell(idCell) {
+    const state = initialState
+    if ('dataState' in state && idCell in state.dataState) {
+        return `${state.dataState[idCell]}`
+    }
+    return ''
+}
+
+
 function toColumn(col, data) {
     return `<div class="column unselectable" 
-            data-type="resizable" data-col="${data}">
+                data-type="resizable" 
+                data-col="${data}" 
+                style="width: ${widthCol(data)}"
+             >
             ${col}
             <div class="col-resize" data-resize="col"></div>
             </div>`
@@ -13,13 +46,21 @@ function toColumn(col, data) {
 
 function toCell(row) {
     return function(_, col) {
+        const id = `${row}:${col}`
+        const styles = toInLineStyles({
+            ...defaultStyles,
+            ...initialState.stylesState[id]
+        })
         return `
         <div class="cell" 
-            data-col="${col}" 
+            data-col="${col}"
+            data-row="${row}" 
             data-type="cell"
-            data-id="${row}:${col}" 
+            data-id="${id}" 
+            data-value="${dataCell(id)}"
             contenteditable
-        >111</div>`
+            style="${styles}; width: ${widthCol(col)}"
+        >${parse(dataCell(id))}</div>`
     }
 }
 
@@ -28,7 +69,11 @@ function createRow(index, content) {
         ? '<div class="row-resize" data-resize="row"></div>'
         : ''
     return `
-    <div class="row" data-type="resizable">
+    <div class="row" 
+        data-type="resizable" 
+        data-row="${index - 1}" 
+        ${heightRow(index - 1)}
+    >
        <div class="row-info unselectable">
        ${index}
        ${resizer}
@@ -56,7 +101,6 @@ export function createTable(rowCount = 15) {
     for (let row = 0; row < rowCount; row++) {
         const cells = new Array(colsCount)
             .fill('')
-            // .map((_, col) => toCell(col, row))
             .map(toCell(row))
             .join('')
         rows.push(createRow(row + 1, cells))
