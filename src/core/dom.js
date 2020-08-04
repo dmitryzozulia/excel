@@ -10,12 +10,11 @@ class Dom {
             this.$el.innerHTML = html
             return this
         }
-        console.log(this.$el.outerHTML.trim())
         return this.$el.outerHTML.trim()
     }
 
     text(text) {
-        if (typeof text === 'string') {
+        if (typeof text !== 'undefined') {
             this.$el.textContent = text
             return this
         }
@@ -62,22 +61,41 @@ class Dom {
         return this.$el.dataset
     }
 
+    getStyles(styles = []) {
+        return styles.reduce((res, s) => {
+            res[s] = this.$el.style[s]
+            return res
+        }, {})
+    }
+
     css(styles = {}) {
         Object.keys(styles).forEach(key => {
                 this.$el.style[key] = styles[key]
         })
     }
+
+    attr(name, value) {
+        if (value) {
+            this.$el.setAttribute(name, value)
+            return this
+        }
+        return this.$el.getAttribute(name)
+    }
+
     find(selector) {
         return $(this.$el.querySelector(selector))
     }
+
     addClass(name) {
         this.$el.classList.add(name)
         return this
     }
+
     removeClass(name) {
         this.$el.classList.remove(name)
         return this
     }
+
     focus() {
         this.$el.focus()
         return this

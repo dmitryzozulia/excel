@@ -8,6 +8,9 @@ import {
 } from '@/components/table/table.functions'
 import {TableSelection} from '@/components/table/TableSelection'
 import {$} from '@core/dom'
+import * as actions from '@/redux/actions'
+import {defaultStyles} from '@/constans'
+import {parse} from '@core/parse'
 
 export class Table extends ExcelComponent {
     static className = 'excel__table'
@@ -29,26 +32,50 @@ export class Table extends ExcelComponent {
     }
 
     init() {
-        console.log(this)
         super.init()
         const $cell = this.$root.find('[data-id="0:0"]')
-        this.$on('formula:input', text => {
-            this.selection.current.text(text)
+
+        this.$on('formula:input', value => {
+            this.selection.current
+                .attr('data-value', value)
+                .text(parse(value))
+            this.updateTextInStore(value)
         })
+
         this.$on('formula:done', () => {
             this.selection.current.focus()
         })
-       this.selectCell($cell)
+
+        this.selectCell($cell)
+
+        this.$on('tools:applyStyle', value => {
+            this.selection.applyStyle(value)
+            this.$dispatch(actions.applyStyle({
+                value,
+                ids: this.selection.selectedIds
+            }))
+        })
     }
 
     selectCell($cell) {
         this.selection.select($cell)
         this.$emit('table:select', $cell)
+        const styles = $cell.getStyles(Object.keys(defaultStyles))
+        this.$dispatch(actions.changeStyles(styles))
+    }
+
+    async resizeTable(event) {
+        try {
+            const data = await resize(event)
+            this.$dispatch(actions.tableResize(data))
+        } catch (e) {
+            console.warn('Resize error', e.message)
+        }
     }
 
     onMousedown(event) {
         if (shouldResize(event)) {
-            resize(event)
+            this.resizeTable(event)
         } else if (isCell(event)) {
             const $target = $(event.target)
             if (event.ctrlKey) {
@@ -57,7 +84,7 @@ export class Table extends ExcelComponent {
             if (event.shiftKey) {
                 this.selection.selectGroupShift($target)
             } else if (event.ctrlKey === false && event.shiftKey === false) {
-                this.selection.select($target)
+                this.selectCell($target)
             }
             this.$emit('table:select', $target)
         }
@@ -81,7 +108,15 @@ export class Table extends ExcelComponent {
             this.selectCell($next)
         }
     }
+
+    updateTextInStore(value) {
+        this.$dispatch(actions.changeText({
+            id: this.selection.current.data.id,
+            value
+        }))
+    }
     onInput(event) {
-        this.$emit('table:input', $(event.target))
+        $(event.target).data.value = $(event.target).text()
+        this.updateTextInStore($(event.target).data.value)
     }
 }
