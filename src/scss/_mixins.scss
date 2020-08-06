@@ -8,11 +8,15 @@
   color: rgba(0, 0, 0, 0.7);
   user-select: none;
 
+  & a {
+    color: black;
+  }
+
   & i {
     font-size: 20px;
   }
 
-  &:active, &.active {
+  & a:active, &.active {
     color: $color;
   }
 

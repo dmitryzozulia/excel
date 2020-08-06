@@ -1,4 +1,3 @@
-import {initialState} from '@/redux/initialState'
 import {toInLineStyles} from '@core/utils'
 import {defaultStyles} from '@/constans'
 import {parse} from '@core/parse'
@@ -8,24 +7,21 @@ const CODES = {
     Z: 90
 }
 
-function widthCol(idCol) {
-    const state = initialState
+function widthCol(idCol, state) {
         if ('colState' in state && idCol in state.colState) {
             return `${state.colState[idCol]}px;`
         }
     return `120px`
 }
 
-function heightRow(idRow) {
-    const state = initialState
+function heightRow(idRow, state) {
         if ('rowState' in state && idRow in state.rowState) {
             return `style = "height: ${state.rowState[idRow]}px;"`
         }
     return ''
 }
 
-function dataCell(idCell) {
-    const state = initialState
+function dataCell(idCell, state) {
     if ('dataState' in state && idCell in state.dataState) {
         return `${state.dataState[idCell]}`
     }
@@ -33,23 +29,23 @@ function dataCell(idCell) {
 }
 
 
-function toColumn(col, data) {
+function toColumn(col, data, state) {
     return `<div class="column unselectable" 
                 data-type="resizable" 
                 data-col="${data}" 
-                style="width: ${widthCol(data)}"
+                style="width: ${widthCol(data, state)}"
              >
             ${col}
             <div class="col-resize" data-resize="col"></div>
             </div>`
 }
 
-function toCell(row) {
+function toCell(row, state) {
     return function(_, col) {
         const id = `${row}:${col}`
         const styles = toInLineStyles({
             ...defaultStyles,
-            ...initialState.stylesState[id]
+            ...state.stylesState[id]
         })
         return `
         <div class="cell" 
@@ -57,14 +53,14 @@ function toCell(row) {
             data-row="${row}" 
             data-type="cell"
             data-id="${id}" 
-            data-value="${dataCell(id)}"
+            data-value="${dataCell(id, state)}"
             contenteditable
-            style="${styles}; width: ${widthCol(col)}"
-        >${parse(dataCell(id))}</div>`
+            style="${styles}; width: ${widthCol(col, state)}"
+        >${parse(dataCell(id, state))}</div>`
     }
 }
 
-function createRow(index, content) {
+function createRow(index, content, state) {
     const resizer = index
         ? '<div class="row-resize" data-resize="row"></div>'
         : ''
@@ -72,7 +68,7 @@ function createRow(index, content) {
     <div class="row" 
         data-type="resizable" 
         data-row="${index - 1}" 
-        ${heightRow(index - 1)}
+        ${heightRow((index - 1), state)}
     >
        <div class="row-info unselectable">
        ${index}
@@ -87,23 +83,23 @@ function toChar(_, index) {
     return String.fromCharCode(CODES.A + index)
 }
 
-export function createTable(rowCount = 15) {
+export function createTable(rowCount = 300, state) {
     const colsCount = CODES.Z - CODES.A + 1
     const rows = []
     const cols = new Array(colsCount)
         .fill('')
         .map(toChar)
-        .map(toColumn)
+        .map((i, b) => toColumn(i, b, state))
         .join('')
 
-    rows.push(createRow('', cols))
+    rows.push(createRow('', cols, state))
 
     for (let row = 0; row < rowCount; row++) {
         const cells = new Array(colsCount)
             .fill('')
-            .map(toCell(row))
+            .map(toCell(row, state))
             .join('')
-        rows.push(createRow(row + 1, cells))
+        rows.push(createRow(row + 1, cells, state))
     }
     return rows.join('')
 }
