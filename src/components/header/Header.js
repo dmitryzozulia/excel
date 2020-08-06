@@ -3,6 +3,7 @@ import {changeName} from '@/redux/actions'
 import {$} from '@core/dom'
 import {debounce} from '@core/utils'
 import {defaultName} from '@/constans'
+import {ActiveRoute} from '@core/routes/ActiveRoute'
 
 
 export class Header extends ExcelComponent {
@@ -10,7 +11,7 @@ export class Header extends ExcelComponent {
     constructor($root, options) {
         super($root, {
             name: 'Header',
-            listeners: ['input'],
+            listeners: ['input', 'click'],
             ...options
         })
     }
@@ -25,16 +26,32 @@ export class Header extends ExcelComponent {
             <input type="text" class="input" value="${name}" />
             <div>
                 <div class="button">
-                    <i class="material-icons">exit_to_app</i>
+                        <i class="material-icons">exit_to_app</i>
                 </div>
                 <div class="button">
-                    <i class="material-icons">delete</i>
+                        <i class="material-icons">delete</i>
                 </div>
             </div>
         `
     }
+
     onInput(event) {
         const $target = $(event.target)
         this.$dispatch(changeName($target.text()))
+    }
+
+    onClick(event) {
+        const $target = $(event.target)
+        if ($target.$el.innerHTML === 'delete') {
+            const decision = confirm('Do you really want to delete this table')
+            if (decision) {
+                localStorage
+                    .removeItem('excel:' + ActiveRoute.param)
+                    ActiveRoute.navigate('')
+            }
+        }
+        if ($target.$el.innerHTML === 'exit_to_app') {
+            ActiveRoute.navigate('')
+        }
     }
 }
