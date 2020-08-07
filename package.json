@@ -4,11 +4,12 @@
   "description": "excel ",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
     "build": "cross-env NODE_ENV=production webpack --mode production"
   },
-  "browserslist": "> 0.25%, not dead",
+  "browserslist": ["> 0.25%, not dead"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dmitryzozulia/excel.git"
@@ -36,7 +37,9 @@
     "eslint": "^7.3.1",
     "eslint-config-google": "^0.14.0",
     "eslint-loader": "^4.0.2",
+    "eslint-plugin-jest": "^23.20.0",
     "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.2.2",
     "mini-css-extract-plugin": "^0.9.0",
     "sass": "^1.26.9",
     "sass-loader": "^8.0.2",
@@ -46,6 +49,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
+    "@jest/globals": "^26.2.0",
     "normalize.css": "^8.0.1"
   }
 }
